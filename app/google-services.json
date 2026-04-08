@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "261641797594",
+    "project_id": "expence-tracker-3fe76",
+    "storage_bucket": "expence-tracker-3fe76.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:261641797594:android:ecc65c7f27865f63ad8ae3",
+        "android_client_info": {
+          "package_name": "com.nohari.noharishop"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCK5kpTuE2rleEqTj1L5B43NhULQ9iq3zo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

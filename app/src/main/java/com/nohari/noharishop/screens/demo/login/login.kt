@@ -90,6 +90,8 @@ fun LoginScreen(navController: NavHostController){
                     contentDescription="email icon",
 
                 ) },
+            modifier = Modifier.fillMaxWidth(),
+            singleLine = true,
         )
         Spacer(modifier = Modifier.height(30.dp))
         OutlinedTextField(
@@ -110,7 +112,7 @@ fun LoginScreen(navController: NavHostController){
             onClick = {},
             modifier = Modifier.fillMaxWidth(),
             colors = ButtonDefaults.buttonColors(
-                containerColor = Color.Green,
+                containerColor = Color.Black,
                 contentColor = Color.White,
             )
         )

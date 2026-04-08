@@ -143,17 +143,7 @@ fun RegisterScreen(navController: NavHostController) {
         }
         Spacer(modifier = Modifier.height(10.dp))
 
-        Button(
-            onClick = {},
-            modifier = Modifier.fillMaxWidth(),
-            colors = ButtonDefaults.buttonColors(
-                containerColor = Color.Black,
-                contentColor = Color.White,
-            )
-        )
-        {
-            Text("Login", fontSize = 24.sp)
-        }
+
         TextButton(onClick = {navController.navigate(ROUTE_LOGIN)}) {
             Text("Already have an account? Login")
         }
