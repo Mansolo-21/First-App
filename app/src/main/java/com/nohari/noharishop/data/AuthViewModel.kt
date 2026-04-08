@@ -24,10 +24,10 @@ class AuthViewModel(var navController: NavHostController,var context:Context){
             mAuth.createUserWithEmailAndPassword(email,password)
                 .addOnCompleteListener {
                     if(it.isSuccessful){
-                        val username= User(fullname, email, password,mAuth.currentUser !!.uid)
+                        val userdata= User(fullname, email, password,mAuth.currentUser !!.uid)
                         val regRef= FirebaseDatabase.getInstance().getReference()
                             .child("Users"+mAuth.currentUser !!.uid)
-                        regRef.setValue(username).addOnCompleteListener {
+                        regRef.setValue(userdata).addOnCompleteListener {
                             if(it.isSuccessful){
                                 Toast.makeText(context,"User Registered successfully",Toast.LENGTH_LONG).show()
                                 navController.navigate(ROUTE_LOGIN)
