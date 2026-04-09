@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Person
@@ -29,13 +30,19 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.DefaultPivotX
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavHostController
+import androidx.navigation.compose.rememberNavController
+import com.nohari.noharishop.data.AuthViewModel
 import com.nohari.noharishop.screens.Homescreen.HomeCard
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun DashboardScreen() {
+fun DashboardScreen(navController: NavHostController) {
+    val context= LocalContext.current
+    val myauth= AuthViewModel(navController,context)
     Scaffold(
         topBar = {
             TopAppBar(
@@ -55,6 +62,11 @@ fun DashboardScreen() {
                             Icon(
                                 imageVector = Icons.Default.Person,
                                 contentDescription = "Settings Icon")}
+
+                        IconButton(onClick = { }) {
+                            Icon(
+                                imageVector = Icons.Default.AccountCircle,
+                                contentDescription = "Logout Icon")}
                     }
                 },
 
@@ -120,5 +132,5 @@ fun DashboardScreen() {
 @Preview(showBackground = true)
 @Composable
 fun dashboardpreview(){
-    DashboardScreen()
+    DashboardScreen(rememberNavController())
 }

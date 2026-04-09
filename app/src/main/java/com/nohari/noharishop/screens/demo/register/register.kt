@@ -37,6 +37,10 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.nohari.noharishop.R
 import com.nohari.noharishop.navigation.ROUTE_LOGIN
+import android.content.Context
+import android.util.Log
+import androidx.compose.ui.platform.LocalContext
+import com.nohari.noharishop.data.AuthViewModel
 
 @Composable
 fun RegisterScreen(navController: NavHostController) {
@@ -130,15 +134,24 @@ fun RegisterScreen(navController: NavHostController) {
 
         )
         Spacer(modifier = Modifier.height(40.dp))
+        val context = LocalContext.current
+        val authViewModel = AuthViewModel(navController, context)
         Button(
-            onClick = {},
+            onClick = {
+                Log.d("DEBUG_EMAIL", "Email: '$email'")
+                authViewModel.signup(
+                    fullname.trim(),
+                    email.trim(),
+                    password.trim(),
+                    confirmation.trim()
+                )
+            },
             modifier = Modifier.fillMaxWidth(),
             colors = ButtonDefaults.buttonColors(
                 containerColor = Color.Black,
                 contentColor = Color.White,
             )
-        )
-        {
+        ) {
             Text("Register", fontSize = 24.sp)
         }
         Spacer(modifier = Modifier.height(10.dp))

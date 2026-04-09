@@ -24,21 +24,26 @@ import com.nohari.noharishop.navigation.AppNavHost
 import com.nohari.noharishop.screens.demo.demo.FirstScreen
 import com.nohari.noharishop.screens.demo.login.LoginScreen
 import com.nohari.noharishop.ui.theme.NohariShopTheme
+import com.google.firebase.FirebaseApp
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        FirebaseApp.initializeApp(this)
+
         enableEdgeToEdge()
         setContent {
             AppNavHost()
         }
     }
-}
+} // ✅ CLOSE CLASS HERE
 
+// 👇 OUTSIDE the class
 @Composable
 fun demo(){
-    Column(modifier= Modifier.fillMaxSize()
-        .background(Color.Cyan),
+    Column(
+        modifier = Modifier.fillMaxSize().background(Color.Cyan),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
@@ -54,7 +59,8 @@ fun demo(){
             fontSize = 32.sp,
             fontFamily = FontFamily.Cursive
         )
-    }}
+    }
+}
 
 @Preview(showBackground = true)
 @Composable

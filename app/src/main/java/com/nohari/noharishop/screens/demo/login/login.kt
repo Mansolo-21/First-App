@@ -39,10 +39,12 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
+import com.nohari.noharishop.data.AuthViewModel
 import com.nohari.noharishop.navigation.ROUTE_REGISTER
 
 @Composable
@@ -108,8 +110,10 @@ fun LoginScreen(navController: NavHostController){
 
         )
         Spacer(modifier = Modifier.height(30.dp))
+        val context= LocalContext.current
+        val myauth= AuthViewModel(navController, context)
         Button(
-            onClick = {},
+            onClick = {myauth.login(email, password)},
             modifier = Modifier.fillMaxWidth(),
             colors = ButtonDefaults.buttonColors(
                 containerColor = Color.Black,
