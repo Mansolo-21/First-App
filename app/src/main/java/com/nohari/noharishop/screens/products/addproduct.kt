@@ -1,6 +1,13 @@
 package com.nohari.noharishop.screens.products
 
+import android.net.Uri
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Home
@@ -13,22 +20,38 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.material3.TopAppBar
+import androidx.compose.ui.graphics.RectangleShape
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.text.input.KeyboardType
+import androidx.navigation.NavHostController
+import androidx.navigation.compose.rememberNavController
+import coil.compose.AsyncImage
+import com.nohari.noharishop.R
+
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun AddProduct() {
+fun AddProduct(navController: NavHostController) {
 
     // 🔹 State variables
     var productName by remember { mutableStateOf("") }
     var productPrice by remember { mutableStateOf("") }
     var productDescription by remember { mutableStateOf("") }
+    var imageUri by remember { mutableStateOf<Uri?>(null) }
+    //imagepicker launcher
+    val imagePickerLauncher= rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.GetContent()
+    ){
+        uri: Uri? ->
+        imageUri=uri
+    }
 
     Scaffold(
 
         // 🔹 TOP BAR
         topBar = {
             TopAppBar(
-                title = { Text("Welcome to The NohariShop") },
+                title = { Text("Add Product") },
                 colors = TopAppBarDefaults.topAppBarColors(
                     containerColor = Color.Black,
                     titleContentColor = Color.White
@@ -84,7 +107,7 @@ fun AddProduct() {
             }
         },
 
-        // 🔹 FLOATING BUTTON
+
         floatingActionButton = {
             FloatingActionButton(onClick = {
                 // TODO: Handle Add Product
@@ -116,15 +139,16 @@ fun AddProduct() {
                 label = { Text("Product Name") },
                 modifier = Modifier.fillMaxWidth()
             )
-
+            Spacer(modifier = Modifier.height(20.dp))
             // 🔹 PRODUCT PRICE
             OutlinedTextField(
                 value = productPrice,
                 onValueChange = { productPrice = it },
                 label = { Text("Price") },
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier.fillMaxWidth(),
+                keyboardOptions =KeyboardOptions(keyboardType = KeyboardType.Number)
             )
-
+            Spacer(modifier = Modifier.height(20.dp))
             // 🔹 PRODUCT DESCRIPTION
             OutlinedTextField(
                 value = productDescription,
@@ -133,8 +157,26 @@ fun AddProduct() {
                 modifier = Modifier.fillMaxWidth(),
                 maxLines = 3
             )
+            Spacer(modifier = Modifier.height(10.dp))
+//PRODUCT IMAGE picker plus preview
+            Card(
+                shape = CircleShape,
+                modifier = Modifier
+                    .size((140.dp))
+                    .clickable{imagePickerLauncher.launch("image/*")}
+            ) {
+                AsyncImage(
+                    model = imageUri ?: R.drawable.background,
+                    contentScale = ContentScale.Crop,
+                    contentDescription = "product",
 
-            // 🔹 ADD BUTTON
+                )
+            }
+            OutlinedButton(onClick = {imagePickerLauncher.launch("image/*")}) {
+                Text("Choose Image")
+            }
+
+            //
             Button(
                 onClick = {
                     // 👉 Handle product submission here
@@ -153,5 +195,5 @@ fun AddProduct() {
 @Preview(showBackground = true)
 @Composable
 fun addpreview(){
-    AddProduct()
+    AddProduct(rememberNavController())
 }

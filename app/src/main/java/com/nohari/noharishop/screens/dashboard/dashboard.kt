@@ -1,136 +1,146 @@
 package com.nohari.noharishop.screens.dashboard
 
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.AccountCircle
-import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.Home
-import androidx.compose.material.icons.filled.Person
-import androidx.compose.material.icons.filled.Settings
-import androidx.compose.material3.BottomAppBar
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.FloatingActionButton
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.NavigationBar
-import androidx.compose.material3.NavigationBarItem
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.TopAppBarDefaults
-import androidx.compose.runtime.Composable
+import androidx.compose.material.icons.filled.*
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.vector.DefaultPivotX
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.nohari.noharishop.data.AuthViewModel
+import com.nohari.noharishop.navigation.ROUTE_ADDPRODUCT
+import com.nohari.noharishop.navigation.ROUTE_INTENT
 import com.nohari.noharishop.screens.Homescreen.HomeCard
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DashboardScreen(navController: NavHostController) {
-    val context= LocalContext.current
-    val myauth= AuthViewModel(navController,context)
+
+    val context = LocalContext.current
+    val myauth = remember { AuthViewModel(navController, context) }
+
+    var selectedIndex by remember { mutableStateOf(0) }
+
+    // ✅ FETCH FIREBASE USER
+    LaunchedEffect(Unit) {
+        myauth.fetchUsername()
+    }
+
     Scaffold(
+
+        // 🔝 TOP BAR
         topBar = {
             TopAppBar(
-                title = { Text("Welcome to The NohariShop") },
+                title = { Text("Shop") },
                 colors = TopAppBarDefaults.topAppBarColors(
                     containerColor = Color.Black,
                     titleContentColor = Color.White
                 ),
                 actions = {
-                    IconButton(onClick = { }) {
-                        Icon(
-                            imageVector = Icons.Default.Settings,
-                            contentDescription = "Settings Icon",
-                            tint = Color.White
-                        )
-                        IconButton(onClick = { }) {
-                            Icon(
-                                imageVector = Icons.Default.Person,
-                                contentDescription = "Settings Icon")}
 
-                        IconButton(onClick = { }) {
-                            Icon(
-                                imageVector = Icons.Default.AccountCircle,
-                                contentDescription = "Logout Icon")}
+                    IconButton(onClick = {}) {
+                        Icon(Icons.Default.Person, contentDescription = null, tint = Color.White)
                     }
-                },
 
+                    IconButton(onClick = {
+                        myauth.logout()
+                    }) {
+                        Icon(Icons.Default.AccountCircle, contentDescription = null, tint = Color.White)
+                    }
+                }
             )
         },
-                //bottom bar
-                bottomBar ={
-                    NavigationBar() {
-                        NavigationBarItem(
-                            selected = true,
-                            onClick = {},
-                            icon = {
-                                Icon(imageVector = Icons.Default.Home, contentDescription = "home")
-                            },
-                            label = {Text("Home")}
-                        )
-                        NavigationBarItem(
-                            selected = true,
-                            onClick = {},
-                            icon = {
-                                Icon(imageVector = Icons.Default.Settings, contentDescription = "settings")
-                            },
-                            label = {Text("Settings")}
-                        )
-                        NavigationBarItem(
-                            selected = false,
-                            onClick = {},
-                            icon = {
-                                Icon(imageVector = Icons.Default.Person, contentDescription = "settings")
-                            },
-                            label = {Text("Profile")}
-                        )
-                    }
-                },
-        //floatingActionButton
+
+        // 🔻 BOTTOM BAR
+        bottomBar = {
+            NavigationBar {
+
+                NavigationBarItem(
+                    selected = selectedIndex == 0,
+                    onClick = { selectedIndex = 0 },
+                    icon = { Icon(Icons.Default.Home, null) },
+                    label = { Text("Home") }
+                )
+
+                NavigationBarItem(
+                    selected = selectedIndex == 1,
+                    onClick = { selectedIndex = 1 },
+                    icon = { Icon(Icons.Default.Settings, null) },
+                    label = { Text("Settings") }
+                )
+
+                NavigationBarItem(
+                    selected = selectedIndex == 2,
+                    onClick = { selectedIndex = 2 },
+                    icon = { Icon(Icons.Default.Person, null) },
+                    label = { Text("Profile") }
+                )
+            }
+        },
+
         floatingActionButton = {
             FloatingActionButton(onClick = {}) {
-                Icon(imageVector = Icons.Default.Add,contentDescription ="add icon")
+                Icon(Icons.Default.Add, null)
             }
         }
 
-    )  { innerPadding ->
+    ) { padding ->
+
         Column(
             modifier = Modifier
-                .padding(innerPadding)
-                .fillMaxSize(),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center
+                .padding(padding)
+                .fillMaxSize()
+                .padding(16.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Row() {
-                HomeCard(title = "Add Product", background = Color.Red)
-                HomeCard(title = "Add Product", background = Color.Blue)
-                Row() {
-                    HomeCard(title = "Add Product", background = Color.Black,)
-                    HomeCard(title = "Add Product", background = Color.Yellow,)
+
+            // 🔥 FIREBASE USER NAME
+            Text(
+                text = "Welcome, ${myauth.username.value}",
+                style = MaterialTheme.typography.titleLarge
+            )
+
+            Spacer(modifier = Modifier.height(20.dp))
+
+            // 🔥 GRID FIX (ALWAYS VISIBLE)
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(12.dp)
+            ) {
+                Box(modifier = Modifier.weight(1f)) {
+                    HomeCard("Add Product", Color.Red, onClick = {navController.navigate(
+                        ROUTE_ADDPRODUCT
+                    )})
+                }
+                Box(modifier = Modifier.weight(1f)) {
+                    HomeCard("View Products", Color.Blue,onClick ={} )
+                }
+            }
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(12.dp)
+            ) {
+                Box(modifier = Modifier.weight(1f)) {
+                    HomeCard("Orders", Color.Black,onClick ={} )
+                }
+                Box(modifier = Modifier.weight(1f)) {
+                    HomeCard("Intents", Color.Yellow,onClick ={ ROUTE_INTENT } )
                 }
             }
         }
     }
-
 }
-
 @Preview(showBackground = true)
 @Composable
-fun dashboardpreview(){
+fun DashboardPreview(){
     DashboardScreen(rememberNavController())
 }
