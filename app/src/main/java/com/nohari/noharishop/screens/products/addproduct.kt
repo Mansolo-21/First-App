@@ -22,11 +22,13 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.material3.TopAppBar
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import coil.compose.AsyncImage
 import com.nohari.noharishop.R
+import com.nohari.noharishop.data.ProductViewModel
 
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -177,12 +179,20 @@ fun AddProduct(navController: NavHostController) {
             }
 
             //
+            val context= LocalContext.current
+            val myproductviewmodel= ProductViewModel(navController, context)
             Button(
                 onClick = {
-                    // 👉 Handle product submission here
-                    println("Name: $productName")
-                    println("Price: $productPrice")
-                    println("Description: $productDescription")
+                    myproductviewmodel.uploadProduct(
+                        imageUri = imageUri,
+                        name =  productName,
+                        price = productPrice,
+                        description = productDescription
+                    )
+                    //clear textfields
+                    productName=""
+                    productPrice=""
+                    productDescription=""
                 },
                 modifier = Modifier.fillMaxWidth()
             ) {

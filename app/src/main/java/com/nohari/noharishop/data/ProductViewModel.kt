@@ -2,38 +2,34 @@ package com.nohari.noharishop.data
 
 import android.content.Context
 import android.net.Uri
+import android.util.Log
 import android.widget.Toast
 import androidx.navigation.NavHostController
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.FirebaseDatabase
-import com.nohari.noharishop.navigation.ROUTE_DASHBOARD
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import okhttp3.MediaType.Companion.toMediaTypeOrNull
-import okhttp3.MultipartBody
-import okhttp3.OkHttpClient
-import okhttp3.Request
-import okhttp3.RequestBody.Companion.toRequestBody
-import java.io.InputStream
+import kotlinx.coroutines.withContext
+import org.json.JSONObject
+import java.io.OutputStreamWriter
+import java.net.HttpURLConnection
+import java.net.URL
 
 class ProductViewModel(
     var navController: NavHostController,
     var context: Context
 ) {
 
-    // Cloudinary config
-    private val cloudinaryUrl =
-        "https://api.cloudinary.com/v1_1/dkgilo0wp/image/upload"
-    private val uploadPreset = "products"
+    private val TAG = "PRODUCT_DEBUG"
 
-    // Firebase
     private val databaseReference =
         FirebaseDatabase.getInstance().getReference("Products")
 
-    // -------------------------------
-    // Upload Product Function
-    // -------------------------------
+    // 🔥 CHANGE THESE
+    private val CLOUD_NAME = "dkgilo0wp"
+    private val UPLOAD_PRESET = "nohari_upload"
+
     fun uploadProduct(
         imageUri: Uri?,
         name: String,
@@ -41,20 +37,29 @@ class ProductViewModel(
         description: String
     ) {
 
+        if (imageUri == null) {
+            Toast.makeText(context, "Select an image", Toast.LENGTH_SHORT).show()
+            return
+        }
+
         val ref = databaseReference.push()
-        val currentUser = FirebaseAuth.getInstance().currentUser
-        val userId = currentUser?.uid ?: ""
+        val userId = FirebaseAuth.getInstance().currentUser?.uid ?: ""
 
         CoroutineScope(Dispatchers.IO).launch {
+
             try {
 
-                // Upload image first
-                val imageUrl = if (imageUri != null) {
-                    uploadToCloudinary(imageUri)
-                } else {
-                    ""
+                // 1. Upload image to Cloudinary
+                val imageUrl = uploadToCloudinary(imageUri)
+
+                if (imageUrl == null) {
+                    withContext(Dispatchers.Main) {
+                        Toast.makeText(context, "Image upload failed", Toast.LENGTH_LONG).show()
+                    }
+                    return@launch
                 }
 
+                // 2. Save product to Firebase
                 val productData = mapOf(
                     "id" to ref.key,
                     "name" to name,
@@ -64,79 +69,60 @@ class ProductViewModel(
                     "imageUrl" to imageUrl
                 )
 
-                // Save to Firebase
                 ref.setValue(productData).addOnCompleteListener { task ->
+
                     CoroutineScope(Dispatchers.Main).launch {
+
                         if (task.isSuccessful) {
-                            Toast.makeText(
-                                context,
-                                "Product saved successfully",
-                                Toast.LENGTH_SHORT
-                            ).show()
-
-                            navController.navigate(ROUTE_DASHBOARD)
-
+                            Toast.makeText(context, "Product uploaded", Toast.LENGTH_SHORT).show()
                         } else {
-                            Toast.makeText(
-                                context,
-                                "Error: ${task.exception?.message}",
-                                Toast.LENGTH_SHORT
-                            ).show()
+                            Toast.makeText(context, task.exception?.message, Toast.LENGTH_LONG).show()
                         }
                     }
                 }
 
             } catch (e: Exception) {
-                CoroutineScope(Dispatchers.Main).launch {
-                    Toast.makeText(
-                        context,
-                        "Upload failed: ${e.message}",
-                        Toast.LENGTH_SHORT
-                    ).show()
+
+                withContext(Dispatchers.Main) {
+                    Toast.makeText(context, e.message, Toast.LENGTH_LONG).show()
                 }
             }
         }
     }
 
-    // -------------------------------
-    // Upload to Cloudinary
-    // -------------------------------
-    private fun uploadToCloudinary(uri: Uri): String {
+    // 🔥 CLOUDINARY UPLOAD FUNCTION
+    private fun uploadToCloudinary(uri: Uri): String? {
 
-        val inputStream: InputStream? =
-            context.contentResolver.openInputStream(uri)
+        return try {
 
-        val fileBytes = inputStream?.readBytes()
-            ?: throw Exception("Image read failed")
+            val url = URL("https://api.cloudinary.com/v1_1/$CLOUD_NAME/image/upload")
+            val connection = url.openConnection() as HttpURLConnection
 
-        val requestBody = MultipartBody.Builder()
-            .setType(MultipartBody.FORM)
-            .addFormDataPart(
-                "file",
-                "image.jpg",
-                fileBytes.toRequestBody("image/*".toMediaTypeOrNull())
-            )
-            .addFormDataPart("upload_preset", uploadPreset)
-            .build()
+            connection.requestMethod = "POST"
+            connection.doOutput = true
 
-        val request = Request.Builder()
-            .url(cloudinaryUrl)
-            .post(requestBody)
-            .build()
+            val outputStream = connection.outputStream
+            val writer = OutputStreamWriter(outputStream)
 
-        val response = OkHttpClient().newCall(request).execute()
+            val imageBytes = context.contentResolver.openInputStream(uri)?.readBytes()
 
-        if (!response.isSuccessful) {
-            throw Exception("Upload failed")
+            val base64Image = android.util.Base64.encodeToString(imageBytes, android.util.Base64.NO_WRAP)
+
+            val body =
+                "file=data:image/jpeg;base64,$base64Image&upload_preset=$UPLOAD_PRESET"
+
+            writer.write(body)
+            writer.flush()
+            writer.close()
+
+            val response = connection.inputStream.bufferedReader().readText()
+
+            val json = JSONObject(response)
+            json.getString("secure_url")
+
+        } catch (e: Exception) {
+            Log.e(TAG, "Cloudinary error: ${e.message}")
+            null
         }
-
-        val responseBody = response.body?.string()
-
-        val secureUrl = Regex("\"secure_url\":\"(.*?)\"")
-            .find(responseBody ?: "")
-            ?.groupValues?.get(1)
-
-        return secureUrl
-            ?: throw Exception("Failed to get image URL")
     }
 }
