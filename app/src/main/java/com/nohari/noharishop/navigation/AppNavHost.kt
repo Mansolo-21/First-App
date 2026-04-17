@@ -7,11 +7,12 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.nohari.noharishop.data.ProductViewModel
 import com.nohari.noharishop.screens.dashboard.DashboardScreen
 import com.nohari.noharishop.screens.demo.demo.IntentScreen
-
 import com.nohari.noharishop.screens.demo.login.LoginScreen
 import com.nohari.noharishop.screens.products.AddProduct
+import com.nohari.noharishop.screens.products.ProductListScreen
 import com.nohari.noharishop.screens.splashscreen.SplashScreen
 
 
@@ -48,5 +49,8 @@ fun AppNavHost(
     }
     composable(ROUTE_INTENT){
         IntentScreen(navController)
+    }
+    composable(ROUTE_LISTPRODUCTS){
+        ProductListScreen(navController)
     }
 }}

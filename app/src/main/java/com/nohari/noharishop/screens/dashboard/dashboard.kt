@@ -16,6 +16,7 @@ import androidx.navigation.compose.rememberNavController
 import com.nohari.noharishop.data.AuthViewModel
 import com.nohari.noharishop.navigation.ROUTE_ADDPRODUCT
 import com.nohari.noharishop.navigation.ROUTE_INTENT
+import com.nohari.noharishop.navigation.ROUTE_LISTPRODUCTS
 import com.nohari.noharishop.screens.Homescreen.HomeCard
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -108,7 +109,7 @@ fun DashboardScreen(navController: NavHostController) {
 
             Spacer(modifier = Modifier.height(20.dp))
 
-            // 🔥 GRID FIX (ALWAYS VISIBLE)
+            //  GRID FIX (ALWAYS VISIBLE)
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.spacedBy(12.dp)
@@ -119,7 +120,7 @@ fun DashboardScreen(navController: NavHostController) {
                     )})
                 }
                 Box(modifier = Modifier.weight(1f)) {
-                    HomeCard("View Products", Color.Blue,onClick ={} )
+                    HomeCard("View Products", Color.Blue,onClick ={ navController.navigate(ROUTE_LISTPRODUCTS) } )
                 }
             }
 
