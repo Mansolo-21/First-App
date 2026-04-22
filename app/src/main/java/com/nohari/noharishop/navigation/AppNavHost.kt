@@ -13,6 +13,7 @@ import com.nohari.noharishop.screens.demo.demo.IntentScreen
 import com.nohari.noharishop.screens.demo.login.LoginScreen
 import com.nohari.noharishop.screens.products.AddProduct
 import com.nohari.noharishop.screens.products.ProductListScreen
+import com.nohari.noharishop.screens.products.UpdateProductScreen
 import com.nohari.noharishop.screens.splashscreen.SplashScreen
 
 
@@ -52,5 +53,14 @@ fun AppNavHost(
     }
     composable(ROUTE_LISTPRODUCTS){
         ProductListScreen(navController)
+    }
+    composable("$ROUTE_UPDATEPRODUCT/{productId}") { backStackEntry ->
+
+        val productId = backStackEntry.arguments?.getString("productId") ?: ""
+
+        UpdateProductScreen(
+            navController = navController,
+            productId = productId
+        )
     }
 }}

@@ -126,4 +126,60 @@ class ProductViewModel( var navController: NavHostController,var context: Contex
 
         return products
     }
+    fun deleteProduct(productId:String){
+        databaseReference.child(productId).removeValue()
+            .addOnSuccessListener {
+                Toast.makeText(context,"Product Deleted",Toast.LENGTH_SHORT).show()
+            }
+            .addOnFailureListener {
+                Toast.makeText(context,"Failed to Delete", Toast.LENGTH_SHORT).show()
+            }
+    }
+    fun updateProduct(
+        productId: String,
+        imageUri: Uri?,
+        name: String,
+        price: String,
+        description: String
+    ) {
+        val currentUser = FirebaseAuth.getInstance().currentUser
+        val userId = currentUser?.uid ?: ""
+
+        CoroutineScope(Dispatchers.IO).launch {
+            try {
+                val imageUrl = if (imageUri != null) {
+                    uploadToCloudinary(context, imageUri)
+                } else {
+                    null // keep old image
+                }
+
+                val updates = mutableMapOf<String, Any>(
+                    "name" to name,
+                    "price" to price,
+                    "description" to description,
+                    "userId" to userId
+                )
+
+                // Only update image if a new one is provided
+                if (imageUrl != null) {
+                    updates["imageUrl"] = imageUrl
+                }
+
+                databaseReference.child(productId).updateChildren(updates)
+                    .addOnCompleteListener {
+                        if (it.isSuccessful) {
+                            Toast.makeText(context, "Product updated", Toast.LENGTH_SHORT).show()
+                            navController.navigate(ROUTE_DASHBOARD)
+                        } else {
+                            Toast.makeText(context, "Error: ${it.exception?.message}", Toast.LENGTH_SHORT).show()
+                        }
+                    }
+
+            } catch (e: Exception) {
+                CoroutineScope(Dispatchers.Main).launch {
+                    Toast.makeText(context, "Update failed: ${e.message}", Toast.LENGTH_SHORT).show()
+                }
+            }
+        }
+    }
 }

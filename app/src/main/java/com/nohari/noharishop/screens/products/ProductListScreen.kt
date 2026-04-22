@@ -17,6 +17,7 @@ import androidx.navigation.compose.rememberNavController
 import coil.compose.AsyncImage
 import com.nohari.noharishop.data.ProductViewModel
 import com.nohari.noharishop.models.Product
+import com.nohari.noharishop.navigation.ROUTE_UPDATEPRODUCT
 
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -88,7 +89,7 @@ fun ProductListScreen(navController: NavHostController) {
                                 color = MaterialTheme.colorScheme.error,
                                 modifier = Modifier
                                     .clickable {
-//                                        productViewModel.deleteProduct(productItem.id)
+                                        productViewModel.deleteProduct(productItem.id)
                                     }
                             )
 
@@ -98,7 +99,7 @@ fun ProductListScreen(navController: NavHostController) {
                                 color = MaterialTheme.colorScheme.primary,
                                 modifier = Modifier
                                     .clickable {
-//                                        navController.navigate("$ROUTE_UPDATEPRODUCT/${productItem.id}")
+                                       navController.navigate("$ROUTE_UPDATEPRODUCT/${productItem.id}")
                                     }
                             )
                         }
