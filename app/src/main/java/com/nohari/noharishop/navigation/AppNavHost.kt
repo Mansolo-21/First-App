@@ -7,60 +7,80 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.nohari.noharishop.data.ProductViewModel
+
 import com.nohari.noharishop.screens.dashboard.DashboardScreen
 import com.nohari.noharishop.screens.demo.demo.IntentScreen
 import com.nohari.noharishop.screens.demo.login.LoginScreen
+import com.nohari.noharishop.screens.onboarding.OnboardingScreen
 import com.nohari.noharishop.screens.products.AddProduct
 import com.nohari.noharishop.screens.products.ProductListScreen
 import com.nohari.noharishop.screens.products.UpdateProductScreen
+import com.nohari.noharishop.screens.profile.ProfileScreen
 import com.nohari.noharishop.screens.splashscreen.SplashScreen
-
 
 @Composable
 fun AppNavHost(
     modifier: Modifier = Modifier,
     navController: NavHostController = rememberNavController(),
-    startDestination: String =ROUTE_SPLASH
-) {NavHost(
-    navController = navController,
-    startDestination = startDestination,
-    modifier = modifier
+    startDestination: String
 ) {
 
-    composable(ROUTE_SPLASH) {
-        SplashScreen(navController)
-    }
+    NavHost(
+        navController = navController,
+        startDestination = startDestination,
+        modifier = modifier
+    ) {
 
-    composable(ROUTE_LOGIN) {
-        LoginScreen(navController)
-    }
+        // 🟣 SPLASH
+        composable(ROUTE_SPLASH) {
+            SplashScreen(navController)
+        }
 
-    composable(ROUTE_REGISTER) {
-        RegisterScreen(navController)
-    }
+        // 🟢 ONBOARDING
+        composable(ROUTE_ONBOARDING) {
+            OnboardingScreen(navController)
+        }
 
-    // 🔥 ADD THIS
-    composable(ROUTE_DASHBOARD) {
-        DashboardScreen(navController)
-    }
+        // 🔵 AUTH
+        composable(ROUTE_LOGIN) {
+            LoginScreen(navController)
+        }
 
-    composable(ROUTE_ADDPRODUCT){
-        AddProduct(navController)
-    }
-    composable(ROUTE_INTENT){
-        IntentScreen(navController)
-    }
-    composable(ROUTE_LISTPRODUCTS){
-        ProductListScreen(navController)
-    }
-    composable("$ROUTE_UPDATEPRODUCT/{productId}") { backStackEntry ->
+        composable(ROUTE_REGISTER) {
+            RegisterScreen(navController)
+        }
 
-        val productId = backStackEntry.arguments?.getString("productId") ?: ""
+        // 🏠 DASHBOARD
+        composable(ROUTE_DASHBOARD) {
+            DashboardScreen(navController)
+        }
 
-        UpdateProductScreen(
-            navController = navController,
-            productId = productId
-        )
+        // 📦 PRODUCTS
+        composable(ROUTE_ADDPRODUCT) {
+            AddProduct(navController)
+        }
+
+        composable(ROUTE_LISTPRODUCTS) {
+            ProductListScreen(navController)
+        }
+
+        composable("$ROUTE_UPDATEPRODUCT/{productId}") { backStackEntry ->
+            val productId = backStackEntry.arguments?.getString("productId") ?: ""
+
+            UpdateProductScreen(
+                navController = navController,
+                productId = productId
+            )
+        }
+
+        // 📱 INTENT SCREEN
+        composable(ROUTE_INTENT) {
+            IntentScreen(navController)
+        }
+
+        // 👤 PROFILE
+        composable(ROUTE_PROFILE) {
+            ProfileScreen(navController)
+        }
     }
-}}
+}

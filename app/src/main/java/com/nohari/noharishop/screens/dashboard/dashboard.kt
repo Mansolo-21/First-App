@@ -14,9 +14,8 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.nohari.noharishop.data.AuthViewModel
-import com.nohari.noharishop.navigation.ROUTE_ADDPRODUCT
-import com.nohari.noharishop.navigation.ROUTE_INTENT
-import com.nohari.noharishop.navigation.ROUTE_LISTPRODUCTS
+import com.nohari.noharishop.navigation.*
+
 import com.nohari.noharishop.screens.Homescreen.HomeCard
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -28,7 +27,7 @@ fun DashboardScreen(navController: NavHostController) {
 
     var selectedIndex by remember { mutableStateOf(0) }
 
-    // ✅ FETCH FIREBASE USER
+    // 🔥 FETCH USER
     LaunchedEffect(Unit) {
         myauth.fetchUsername()
     }
@@ -45,14 +44,18 @@ fun DashboardScreen(navController: NavHostController) {
                 ),
                 actions = {
 
-                    IconButton(onClick = {}) {
+                    // Profile icon → Profile screen
+                    IconButton(onClick = {
+                        navController.navigate(ROUTE_PROFILE)
+                    }) {
                         Icon(Icons.Default.Person, contentDescription = null, tint = Color.White)
                     }
 
+                    // Logout
                     IconButton(onClick = {
                         myauth.logout()
                     }) {
-                        Icon(Icons.Default.AccountCircle, contentDescription = null, tint = Color.White)
+                        Icon(Icons.Default.ExitToApp, contentDescription = null, tint = Color.White)
                     }
                 }
             )
@@ -62,31 +65,47 @@ fun DashboardScreen(navController: NavHostController) {
         bottomBar = {
             NavigationBar {
 
+                // HOME
                 NavigationBarItem(
                     selected = selectedIndex == 0,
-                    onClick = { selectedIndex = 0 },
+                    onClick = {
+                        selectedIndex = 0
+                    },
                     icon = { Icon(Icons.Default.Home, null) },
                     label = { Text("Home") }
                 )
 
+                // SETTINGS
                 NavigationBarItem(
                     selected = selectedIndex == 1,
-                    onClick = { selectedIndex = 1 },
+                    onClick = {
+                        selectedIndex = 1
+                    },
                     icon = { Icon(Icons.Default.Settings, null) },
                     label = { Text("Settings") }
                 )
 
+                // PROFILE (FIXED)
                 NavigationBarItem(
                     selected = selectedIndex == 2,
-                    onClick = { selectedIndex = 2 },
+                    onClick = {
+                        selectedIndex = 2
+                        navController.navigate(ROUTE_PROFILE) {
+                            launchSingleTop = true
+                            restoreState = true
+                        }
+                    },
                     icon = { Icon(Icons.Default.Person, null) },
                     label = { Text("Profile") }
                 )
             }
         },
 
+        // ➕ FLOATING BUTTON
         floatingActionButton = {
-            FloatingActionButton(onClick = {}) {
+            FloatingActionButton(onClick = {
+                navController.navigate(ROUTE_ADDPRODUCT)
+            }) {
                 Icon(Icons.Default.Add, null)
             }
         }
@@ -101,7 +120,7 @@ fun DashboardScreen(navController: NavHostController) {
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
 
-            // 🔥 FIREBASE USER NAME
+            // 👋 USER WELCOME
             Text(
                 text = "Welcome, ${myauth.username.value}",
                 style = MaterialTheme.typography.titleLarge
@@ -109,39 +128,53 @@ fun DashboardScreen(navController: NavHostController) {
 
             Spacer(modifier = Modifier.height(20.dp))
 
-            //  GRID FIX (ALWAYS VISIBLE)
+            // GRID ROW 1
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.spacedBy(12.dp)
             ) {
                 Box(modifier = Modifier.weight(1f)) {
-                    HomeCard("Add Product", Color.Red, onClick = {navController.navigate(
-                        ROUTE_ADDPRODUCT
-                    )})
+                    HomeCard(
+                        "Add Product",
+                        Color.Red,
+                        onClick = { navController.navigate(ROUTE_ADDPRODUCT) }
+                    )
                 }
+
                 Box(modifier = Modifier.weight(1f)) {
-                    HomeCard("View Products", Color.Blue,onClick ={ navController.navigate(ROUTE_LISTPRODUCTS) } )
+                    HomeCard(
+                        "View Products",
+                        Color.Blue,
+                        onClick = { navController.navigate(ROUTE_LISTPRODUCTS) }
+                    )
                 }
             }
 
             Spacer(modifier = Modifier.height(16.dp))
 
+            // GRID ROW 2
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.spacedBy(12.dp)
             ) {
                 Box(modifier = Modifier.weight(1f)) {
-                    HomeCard("Orders", Color.Black,onClick ={} )
+                    HomeCard(
+                        "Orders",
+                        Color.Black,
+                        onClick = { /* TODO */ }
+                    )
                 }
+
                 Box(modifier = Modifier.weight(1f)) {
-                    HomeCard("Intents", Color.Yellow,onClick ={ ROUTE_INTENT } )
+                    HomeCard(
+                        "Intents",
+                        Color.Yellow,
+                        onClick = {
+                            navController.navigate(ROUTE_INTENT)
+                        }
+                    )
                 }
             }
         }
     }
-}
-@Preview(showBackground = true)
-@Composable
-fun DashboardPreview(){
-    DashboardScreen(rememberNavController())
 }
