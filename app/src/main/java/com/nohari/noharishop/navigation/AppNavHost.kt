@@ -9,6 +9,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 
 import com.nohari.noharishop.screens.dashboard.DashboardScreen
+import com.nohari.noharishop.screens.demo.DemoCarousel
 import com.nohari.noharishop.screens.demo.demo.IntentScreen
 import com.nohari.noharishop.screens.demo.login.LoginScreen
 import com.nohari.noharishop.screens.onboarding.OnboardingScreen
@@ -81,6 +82,9 @@ fun AppNavHost(
         // 👤 PROFILE
         composable(ROUTE_PROFILE) {
             ProfileScreen(navController)
+        }
+        composable(ROUTE_CAROUSEL) {
+            DemoCarousel(navController)
         }
     }
 }

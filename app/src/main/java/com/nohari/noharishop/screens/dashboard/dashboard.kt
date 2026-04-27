@@ -110,6 +110,7 @@ fun DashboardScreen(navController: NavHostController) {
             }
         }
 
+
     ) { padding ->
 
         Column(
@@ -161,7 +162,7 @@ fun DashboardScreen(navController: NavHostController) {
                     HomeCard(
                         "Orders",
                         Color.Black,
-                        onClick = { /* TODO */ }
+                        onClick = { navController.navigate(ROUTE_CAROUSEL)}
                     )
                 }
 

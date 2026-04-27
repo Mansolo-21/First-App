@@ -10,6 +10,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavHostController
+import androidx.navigation.compose.rememberNavController
 import coil.compose.rememberAsyncImagePainter
 
 // ✅ DATA MODEL (keep outside composable in real apps)
@@ -29,7 +31,7 @@ val productList = listOf(
 )
 
 @Composable
-fun DemoCarousel() {
+fun DemoCarousel(navController: NavHostController) {
 
     Column(
         modifier = Modifier
@@ -108,5 +110,5 @@ fun ProductCard(product: Product) {
 @Preview(showBackground = true)
 @Composable
 fun PreviewCarousel() {
-    DemoCarousel()
+    DemoCarousel(rememberNavController())
 }

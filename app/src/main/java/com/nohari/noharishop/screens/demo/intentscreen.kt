@@ -46,8 +46,61 @@ fun IntentScreen(navController: NavHostController){
         }) {
             Text("open websiste")
         }
+        //DAILER
+        Button(onClick = {
+            val intent= Intent(Intent.ACTION_DIAL,Uri.parse(("tel:0777412744")))
+            context.startActivity(intent)
+        }) {
+            Text("Open Dialer")
+        }
+        //map
+        Button(onClick = {
+            val intent = Intent(
+                Intent.ACTION_VIEW,
+                Uri.parse("geo:0,0?q=eMobilis+Institute+Nairobi")
+            )
+            context.startActivity(intent)
+        }) {
+            Text("Open Maps")
+        }
+        Button(onClick = {
+            val intent = Intent(
+                Intent.ACTION_VIEW,
+                Uri.parse("geo:0,0?q=eMobilis+Institute+Nairobi")
+            )
+            context.startActivity(intent)
+        }) {
+            Text("Open Maps")
+        }
+        Button(onClick = {
+            val smsIntent = Intent(
+                Intent.ACTION_SENDTO,
+                Uri.parse("smsto:0140634345")
+            )
 
+            smsIntent.putExtra("sms_body", "Hello Monkey")
 
+            context.startActivity(smsIntent)
+        }) {
+            Text("Send Message")
+        }
+        Button(onClick = {
+            val ussd = Uri.parse("tel:*144#")
+            val intent = Intent(Intent.ACTION_DIAL, ussd)
+            context.startActivity(intent)
+        }) {
+            Text("SIM Toolkit")
+        }
+        Button(onClick = {
+            val intent = context.packageManager
+                .getLaunchIntentForPackage("com.android.stk")
+
+            if (intent != null) {
+                context.startActivity(intent)
+            }
+        }) {
+            Text("SIM Toolkit")
+        }
     }
 
 
